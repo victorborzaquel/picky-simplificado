@@ -22,7 +22,10 @@
         <querydsl.version>5.0.0</querydsl.version>
 	</properties>
 	<dependencies>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+	</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -140,6 +143,13 @@
 						</configuration>
 					</execution>
 				</executions>
+				<dependencies>
+          <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>${querydsl.version}</version>
+          </dependency>
+        </dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

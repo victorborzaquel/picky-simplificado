@@ -1,12 +1,16 @@
 package com.picpay.simple.modules.transfer;
 
+import java.util.Collections;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.picpay.simple.exceptions.ConflictException;
 import com.picpay.simple.modules.transfer.dto.CreateTransferDto;
 import com.picpay.simple.modules.transfer.dto.ResponseTransferDto;
 import com.picpay.simple.modules.transfer.dto.authorizeDto;
+import com.picpay.simple.modules.transfer.repository.TransferRepository;
 import com.picpay.simple.modules.user.UserEntity;
 import com.picpay.simple.modules.user.UserService;
 import com.picpay.simple.modules.user.UserTypeEnum;
@@ -40,11 +44,15 @@ public class TransferService {
     userService.save(destination);
     repository.save(transfer);
 
-    var isAutorize = restTemplate.postForEntity("https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6", dto, authorizeDto.class);
+ 
+    WebClient client = WebClient.create("https://run.mocky.io");
+    var isAutorize = client.post().uri("/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6").bodyValue(dto).retrieve().bodyToMono(authorizeDto.class).block();
 
-    if (!isAutorize.getBody().message().equals("Autorizado")) {
+    if (!isAutorize.message().equals("Autorizado")) {
       throw new ConflictException("Transfer not authorized");
     }
+
+    // var notification = restTemplate.postForEntity("http://o4d9z.mocklab.io/notify", dto, authorizeDto.class);
 
     return TransferMapper.INSTANCE.toDto(transfer);
   }
