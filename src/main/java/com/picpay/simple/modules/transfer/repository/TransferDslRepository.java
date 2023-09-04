@@ -1,26 +1,38 @@
 package com.picpay.simple.modules.transfer.repository;
 
-import java.util.Optional;
+import java.util.List;
 
-import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration.DslContextConfiguration;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import com.picpay.simple.modules.transfer.QTransferEntity;
 import com.picpay.simple.modules.transfer.TransferEntity;
-import com.querydsl.core.types.dsl.DslExpression;
-import com.querydsl.core.types.dsl.DslOperation;
 import com.querydsl.jpa.impl.JPAQuery;
-// QuerydslRepositorySupport implements ProductRepositoryCustom 
+
 @Repository
 public class TransferDslRepository extends QuerydslRepositorySupport {
-  public TransferDslRepository() {
+
+  private final EntityManager entityManager;
+
+  public TransferDslRepository(EntityManager entityManager) {
     super(TransferEntity.class);
+    this.setEntityManager(entityManager);
+    this.entityManager = entityManager;
   }
 
-  Optional<TransferEntity> findAllByUser(Long id) {
-    JPAQuery query = new JPAQuery(entityManager);
+  public List<TransferEntity> findAllByUser(Long id) {
+    JPAQuery<TransferEntity> query = new JPAQuery<>(entityManager);
     QTransferEntity transfer = QTransferEntity.transferEntity;
-    query.
-    return Optional.empty();
+
+    BooleanExpression findPayeeId = transfer.payee.id.eq(id);
+    BooleanExpression findPayerId = transfer.payer.id.eq(id);
+
+    BooleanExpression findPayeeOrPayer = findPayeeId.or(findPayerId);
+
+    return query.from(transfer)
+        .where(findPayeeOrPayer)
+        .orderBy(transfer.date.desc())
+        .stream().toList();
   }
 }

@@ -9,6 +9,8 @@ import com.picpay.simple.modules.transfer.dto.ResponseTransferDto;
 import com.picpay.simple.modules.user.UserEntity;
 import com.picpay.simple.modules.user.UserMapper;
 
+import java.util.List;
+
 @Mapper
 public interface TransferMapper {
 
@@ -21,4 +23,6 @@ public interface TransferMapper {
   TransferEntity toEntity(CreateTransferDto dto, UserEntity payer, UserEntity payee);
 
   ResponseTransferDto toDto(TransferEntity entity);
+
+  List<ResponseTransferDto> toDto(List<TransferEntity> entity);
 }

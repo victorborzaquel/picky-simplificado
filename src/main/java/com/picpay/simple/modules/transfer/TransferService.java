@@ -1,7 +1,9 @@
 package com.picpay.simple.modules.transfer;
 
 import java.util.Collections;
+import java.util.List;
 
+import com.picpay.simple.modules.transfer.repository.TransferDslRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,8 +25,13 @@ import lombok.RequiredArgsConstructor;
 public class TransferService {
 
   private final TransferRepository repository;
+  private final TransferDslRepository repositoryDsl;
   private final UserService userService;
-  private final RestTemplate restTemplate;
+
+  public List<ResponseTransferDto> findAllByUser(Long id) {
+    List<TransferEntity> transfers = repositoryDsl.findAllByUser(id);
+    return TransferMapper.INSTANCE.toDto(transfers);
+  }
 
   @Transactional
   public ResponseTransferDto create(CreateTransferDto dto) {

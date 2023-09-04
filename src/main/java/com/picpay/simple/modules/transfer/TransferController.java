@@ -1,9 +1,6 @@
 package com.picpay.simple.modules.transfer;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.picpay.simple.modules.transfer.dto.CreateTransferDto;
 import com.picpay.simple.modules.transfer.dto.ResponseTransferDto;
@@ -11,8 +8,10 @@ import com.picpay.simple.modules.transfer.dto.ResponseTransferDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/transfers")
+@RequestMapping("transfers")
 @RequiredArgsConstructor
 public class TransferController {
   
@@ -21,5 +20,10 @@ public class TransferController {
   @PostMapping
   public ResponseTransferDto create(@Valid @RequestBody CreateTransferDto dto) {
     return service.create(dto);
+  }
+
+  @GetMapping("user/{id}")
+  public List<ResponseTransferDto> findAllByUser(@PathVariable Long id) {
+    return service.findAllByUser(id);
   }
 }
